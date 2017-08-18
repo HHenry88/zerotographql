@@ -33,8 +33,8 @@ const PersonType = new GraphQLObjectType({
     },
     friends: {
       type: new GraphQLList(PersonType),
-      resolve: (person) => 
-        person.friends.map(getPersonByURL)
+      resolve: (person, args, {loaders}) =>
+        loaders.person.loadMany(person.friends)
     }
   })
 });
@@ -51,9 +51,9 @@ const QueryType = new GraphQLObjectType({
           type: GraphQLString
         }
       },
-      resolve: (root, args) => {
+      resolve: (root, args, {loaders}) => {
         //can do promises, http requests, etc.
-        return getPersonByURL(`/people/${args.id}/`);
+        return loaders.person.load(`/people/${args.id}/`);
       }
     }
   })
